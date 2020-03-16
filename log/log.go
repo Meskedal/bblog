@@ -54,12 +54,16 @@ func Init(user string, filePath string) error {
 
 //Write to log if at correct log lvl. Logging at ERROR level will be fatal as a call to os.Exit will follow.
 func Write(logLevel int, data interface{}) {
+	logEntry(logLevel, data)
+}
+
+func logEntry(logLevel int, data interface{}) {
 	if localLog.logger == nil { //avoids being called if the localLog has not been initialized by Init
 		return
 	}
 	msg := fmt.Sprintf("%v", data)
 	if logLevel >= localLog.level {
-		_, file, line, _ := runtime.Caller(1) //1 as argument signifies retrieving info of the function call that called this function
+		_, file, line, _ := runtime.Caller(2) //2 as argument signifies retrieving info of the function call that called this function
 		switch logLevel {
 		case DEBUG:
 			localLog.logger.Printf("[DEBUG] [%s:%d] %s", file, line, msg)
@@ -69,20 +73,19 @@ func Write(logLevel int, data interface{}) {
 			localLog.logger.Fatalf("[ERROR] [%s:%d] %s", file, line, msg)
 		}
 	}
-
 }
 
 //Debug logs an entry at debug level.
 func Debug(data interface{}) {
-	Write(DEBUG, data)
+	logEntry(DEBUG, data)
 }
 
 //Info logs an entry at info level.
 func Info(data interface{}) {
-	Write(INFO, data)
+	logEntry(INFO, data)
 }
 
 //Error logs an entry at debug level.
 func Error(data interface{}) {
-	Write(ERROR, data)
+	logEntry(ERROR, data)
 }
