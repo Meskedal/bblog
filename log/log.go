@@ -63,7 +63,7 @@ func Write(logLevel int, data interface{}) {
 	}
 	msg := fmt.Sprintf("%v", data)
 	if logLevel >= localLog.level {
-		_, file, line, _ := runtime.Caller(1) //1 as argument signifies retrieving info of the function call that called this function
+		_, file, line, _ := runtime.Caller(2) //2 as argument signifies retrieving info of the function call that called this function when included as a mod package
 		switch logLevel {
 		case DEBUG:
 			localLog.logger.Printf("[DEBUG] [%s:%d] %s", file, line, msg)
