@@ -1,4 +1,4 @@
-package log
+package bblog
 
 import (
 	"fmt"
@@ -16,23 +16,22 @@ const (
 )
 
 //BANNER printed after initialized log.
-const BANNER = `
-
-[START] =================== User: %s =================== [START]
-`
+// const BANNER = `
+// [START] =================== User: %s =================== [START]
+// `
 
 //DefaultLog type
 type DefaultLog struct {
 	logger *log.Logger //logger will write serialized when simultaneously accessed by multiple goroutines
 	level  int
-	user   string
+	// user   string
 }
 
 //Local log object
 var localLog = new(DefaultLog)
 
 //Init initializes the localLog for use according to specified levels
-func Init(user string, filePath string) error {
+func Init(filePath string) error {
 	LogFile, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		return err
@@ -46,10 +45,14 @@ func Init(user string, filePath string) error {
 		localLog.level = INFO
 	case "ERROR":
 		localLog.level = ERROR
+	case "FATAL":
+		localLog.level = FATAL
 	}
-	//	localLog.logger.Printf(BANNER, user)
-
 	return nil
+}
+
+func SetLogLevel(logLevel int) {
+	localLog.level = logLevel
 }
 
 //Write to log if at correct log lvl. Logging at ERROR level will be fatal as a call to os.Exit will follow.
@@ -67,6 +70,8 @@ func Write(logLevel int, data interface{}) {
 			localLog.logger.Printf("[INFO] [%s:%d] %s", file, line, msg)
 		case ERROR:
 			localLog.logger.Fatalf("[ERROR] [%s:%d] %s", file, line, msg)
+		case FATAL:
+			localLog.logger.Fatalf("[FATAL] [%s:%d] %s", file, line, msg)
 		}
 	}
 
@@ -82,7 +87,12 @@ func Info(data interface{}) {
 	Write(INFO, data)
 }
 
-//Error logs an entry at debug level.
+//Error logs an entry at fatal level.
 func Error(data interface{}) {
 	Write(ERROR, data)
+}
+
+//Fatal logs an entry at fatal level and follows with a call to os.Exit(1).
+func Fatal(data interface{}) {
+	Write(FATAL, data)
 }
