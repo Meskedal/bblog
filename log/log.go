@@ -70,7 +70,7 @@ func Write(logLevel int, data interface{}) {
 		case INFO:
 			localLog.logger.Printf("[INFO] [%s:%d] %s", file, line, msg)
 		case ERROR:
-			localLog.logger.Fatalf("[ERROR] [%s:%d] %s", file, line, msg)
+			localLog.logger.Printf("[ERROR] [%s:%d] %s", file, line, msg)
 		case FATAL:
 			localLog.logger.Fatalf("[FATAL] [%s:%d] %s", file, line, msg)
 		}
