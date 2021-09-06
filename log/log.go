@@ -51,6 +51,7 @@ func Init(filePath string) error {
 	return nil
 }
 
+//SetLogLevel changes the current log level of the logger
 func SetLogLevel(logLevel int) {
 	localLog.level = logLevel
 }
